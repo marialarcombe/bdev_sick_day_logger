@@ -1087,7 +1087,7 @@
     <hr class="settings-divider">
 
     <label>Google Sync (optional)</label>
-    <p class="hint" style="margin-bottom:10px;">Paste your Google web app link here to (1) send each month's data to the sheet when you open the email draft, and (2) send completed Return to Work forms to Jess. Saved in your browser only, never in the app's code. See the README for the 5-minute setup.</p>
+    <p class="hint" style="margin-bottom:10px;">Paste your Google web app link here to (1) send each month's data to the sheet when you open the email draft, and (2) send completed Return to Work forms to Laura. Saved in your browser only, never in the app's code. See the README for the 5-minute setup.</p>
     <input type="url" id="sheetUrl" placeholder="https://script.google.com/macros/s/.../exec" oninput="saveSheetUrl()" style="max-width:100%;" />
     <p class="hint" id="sheetStatus" style="margin-top:8px;"></p>
 
@@ -1370,7 +1370,7 @@
       <div class="rtw-feedback" id="rtwFeedback"></div>
       <button class="btn-secondary" onclick="closeRtw()">Cancel</button>
       <button class="btn-secondary" onclick="previewRtwPdf()">👁 Preview PDF</button>
-      <button class="btn-primary" onclick="submitRtw()">Send to Jess</button>
+      <button class="btn-primary" onclick="submitRtw()">Email to Laura</button>
     </div>
   </div>
 </div>
@@ -1442,8 +1442,8 @@ function updateSheetStatus() {
   const el  = document.getElementById('sheetStatus');
   if (!el) return;
   el.textContent  = url
-    ? '✓ Linked — month-end data syncs to the sheet, and Return to Work forms can be sent to Jess.'
-    : 'Not linked — emailing still works; no data is sent to a sheet and RTW forms can’t be sent to Jess (you can still preview/download them).';
+    ? '✓ Linked — month-end data syncs to the sheet, and Return to Work forms can be emailed to Laura.'
+    : 'Not linked — emailing still works; no data is sent to a sheet and RTW forms can’t be emailed to Laura (you can still preview/download them).';
   el.style.color  = url ? '#15803d' : '#6e7c84';
 }
 
@@ -1945,12 +1945,12 @@ async function submitRtw() {
   const anyReason = d.reasons.length > 0;
   const anyAnswer = [d.a8, d.a9, d.a10, d.b1, d.b2, d.b2adj, d.b3, d.b4, d.c1a, d.c1b].some(x => x);
   if (!anyReason && !anyAnswer) {
-    if (!confirm('This form has no reason for absence and none of the Yes/No questions answered.\n\nSend it to Jess anyway?')) return;
+    if (!confirm('This form has no reason for absence and none of the Yes/No questions answered.\n\nSend it to Laura anyway?')) return;
   }
 
   const url = (localStorage.getItem('bdev_sheet_url') || '').trim();
   if (!url) {
-    showRtwFeedback('No Google link set in Settings, so this can’t be sent to Jess yet. Use Preview PDF to download a copy, or add the link in ⚙ Settings.', 'err');
+    showRtwFeedback('No Google link set in Settings, so this can’t be emailed to Laura yet. Use Preview PDF to download a copy, or add the link in ⚙ Settings.', 'err');
     return;
   }
 
@@ -1965,7 +1965,7 @@ async function submitRtw() {
   profiles[d.name] = { payroll: d.payroll, job: d.job, dept: d.dept };
   localStorage.setItem('bdev_profiles', JSON.stringify(profiles));
 
-  showRtwFeedback('Sending to Jess…', 'ok');
+  showRtwFeedback('Emailing to Laura…', 'ok');
 
   const payload = {
     type: 'rtw',
@@ -1985,7 +1985,7 @@ async function submitRtw() {
     if (e.id) { e.rtwSubmitted = true; e.rtwSubmittedAt = new Date().toLocaleDateString('en-GB'); }
     localStorage.setItem('bdev_entries', JSON.stringify(savedEntries));
     renderEntries();
-    showRtwFeedback('✓ Return to Work form sent to Jess. A copy was not stored on this device.', 'ok');
+    showRtwFeedback('✓ Return to Work form emailed to Laura. A copy was not stored on this device.', 'ok');
     setTimeout(closeRtw, 1600);
   } catch (err) {
     showRtwFeedback('Could not reach the Google link — check it in Settings, or use Preview PDF to download and send manually.', 'err');
